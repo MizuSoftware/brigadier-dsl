@@ -25,7 +25,7 @@ makes it easier to write commands. For more information read the [Motivation][wi
 
 ```kotlin
 repositories {
-    mavenCentral()
+    maven("maven.mizu.wtf")
 }
 ```
 
@@ -33,7 +33,7 @@ repositories {
 
 ```kotlin
 dependencies {
-    implementation("dev.nicolai:brigadier-dsl:{current_version}")
+    implementation("dev.nicolai", "brigadier-dsl", "1.0.0")
 }
 ```
 
@@ -43,6 +43,11 @@ dependencies {
 // Import command DSL function and argument shorthands
 import dev.nicolai.brigadier.dsl.command
 import dev.nicolai.brigadier.arguments.*
+
+// Declare source type
+interface MessageSender {
+    fun sendFeedback(feedback: String)
+}
 
 // Declare command with source of type MessageSender
 val whisper = command<MessageSender>("whisper") {
@@ -61,5 +66,6 @@ val whisper = command<MessageSender>("whisper") {
 }
 
 // Build the command literal and register it
+val dispatcher: CommandDispatcher<MessageSender> = /* ... */
 dispatcher.register(whisper.buildLiteral())
 ```

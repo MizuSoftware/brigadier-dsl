@@ -44,7 +44,9 @@ open class DslCommand<S>(
     }
 }
 
-class DslCommandBuilder<S>(private var dslNode: DslCommandTree<S, *>) {
+class DslCommandBuilder<S>(
+    private var dslNode: DslCommandTree<S, *>,
+) {
     fun executes(command: BrigadierCommand<S>) {
         dslNode.executes(command)
     }

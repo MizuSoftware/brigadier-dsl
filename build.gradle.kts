@@ -3,6 +3,9 @@ plugins {
     `java-library`
 }
 
+group = "dev.nicolai"
+version = "1.0.0"
+
 repositories {
     mavenCentral()
     maven("https://libraries.minecraft.net")
