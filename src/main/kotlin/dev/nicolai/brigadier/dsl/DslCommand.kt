@@ -27,11 +27,10 @@ import com.mojang.brigadier.Command as BrigadierCommand
 open class DslCommand<S>(
     private val literal: String,
     private val apply: (LiteralArgumentBuilder<S>.() -> Unit)? = null,
-    private val block: (DslCommandBuilder<S>.() -> Unit)
+    private val block: (DslCommandBuilder<S>.() -> Unit),
 ) : Command<S> {
-
     constructor(
-        literal: String, builderBlock: DslCommandBuilder<S>.() -> Unit
+        literal: String, builderBlock: DslCommandBuilder<S>.() -> Unit,
     ) : this(literal, null, builderBlock)
 
     final override fun buildLiteral(): LiteralArgumentBuilder<S> {
@@ -46,7 +45,6 @@ open class DslCommand<S>(
 }
 
 class DslCommandBuilder<S>(private var dslNode: DslCommandTree<S, *>) {
-
     fun executes(command: BrigadierCommand<S>) {
         dslNode.executes(command)
     }
@@ -58,7 +56,7 @@ class DslCommandBuilder<S>(private var dslNode: DslCommandTree<S, *>) {
     fun literal(
         literal: String,
         apply: (LiteralArgumentBuilder<S>.() -> Unit)? = null,
-        block: (DslCommandBuilder<S>.() -> Unit)? = null
+        block: (DslCommandBuilder<S>.() -> Unit)? = null,
     ): DslCommandBuilder<S> {
         val literalNode = dslNode.literal(literal, apply)
 
@@ -67,7 +65,7 @@ class DslCommandBuilder<S>(private var dslNode: DslCommandTree<S, *>) {
 
     fun literals(
         vararg literals: String,
-        block: (DslCommandBuilder<S>.() -> Unit)? = null
+        block: (DslCommandBuilder<S>.() -> Unit)? = null,
     ): DslCommandBuilder<S> {
         val literalNode = literals.fold(dslNode) { node, literal -> node.literal(literal, null) }
 
@@ -76,7 +74,7 @@ class DslCommandBuilder<S>(private var dslNode: DslCommandTree<S, *>) {
 
     operator fun <T, V> CommandArgument<S, T, V>.provideDelegate(
         thisRef: Any?,
-        property: KProperty<*>
+        property: KProperty<*>,
     ): ReadOnlyProperty<Any?, V> {
         val argument = dslNode.argument(this, null).also { dslNode = it }
         return ReadOnlyProperty { _, _ -> argument.getter() }
@@ -90,5 +88,5 @@ class DslCommandBuilder<S>(private var dslNode: DslCommandTree<S, *>) {
 fun <S> command(
     literal: String,
     apply: (LiteralArgumentBuilder<S>.() -> Unit)? = null,
-    block: DslCommandBuilder<S>.() -> Unit
+    block: DslCommandBuilder<S>.() -> Unit,
 ) = DslCommand(literal, apply, block)

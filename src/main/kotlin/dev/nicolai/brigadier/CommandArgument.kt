@@ -21,7 +21,6 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 
 sealed class CommandArgument<S, T, V> {
-
     abstract fun getValue(context: CommandContext<S>): V
 
     abstract fun buildArgument(): RequiredArgumentBuilder<S, T>
@@ -31,7 +30,7 @@ sealed class CommandArgument<S, T, V> {
 
 class RequiredArgument<S, T, V>(
     private val name: String, private val type: ArgumentType<T>,
-    private val getter: (CommandContext<S>, String) -> V
+    private val getter: (CommandContext<S>, String) -> V,
 ) : CommandArgument<S, T, V>() {
     override fun getValue(context: CommandContext<S>): V = getter(context, name)
 
@@ -46,9 +45,8 @@ class RequiredArgument<S, T, V>(
 
 class OptionalArgument<S, T, V : D, D>(
     private val argument: RequiredArgument<S, T, V>,
-    private val default: (S) -> D
+    private val default: (S) -> D,
 ) : CommandArgument<S, T, D>() {
-
     override fun getValue(context: CommandContext<S>) = try {
         argument.getValue(context)
     } catch (e: IllegalArgumentException) {
@@ -60,6 +58,9 @@ class OptionalArgument<S, T, V : D, D>(
         this.also { argument.apply(block) }
 }
 
-fun <S, T, V> RequiredArgument<S, T, V>.optional() = OptionalArgument(this) { null }
-fun <S, T, V> RequiredArgument<S, T, V>.default(value: V) = OptionalArgument(this) { value }
-fun <S, T, V> RequiredArgument<S, T, V>.defaultGetter(value: (S) -> V) = OptionalArgument(this, value)
+fun <S, T, V> RequiredArgument<S, T, V>.optional() =
+    OptionalArgument(this) { null }
+fun <S, T, V> RequiredArgument<S, T, V>.default(value: V) =
+    OptionalArgument(this) { value }
+fun <S, T, V> RequiredArgument<S, T, V>.defaultGetter(value: (S) -> V) =
+    OptionalArgument(this, value)

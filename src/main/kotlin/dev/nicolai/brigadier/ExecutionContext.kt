@@ -24,7 +24,6 @@ import com.mojang.brigadier.context.CommandContext
  * @see ExecutableCommand
  */
 interface ExecutionContext<S> {
-
     /**
      * The Brigadier command context for this command.
      */

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused")
+@file:Suppress("UnusedReceiverParameter")
 
 package dev.nicolai.brigadier.arguments
 
@@ -36,18 +36,19 @@ import dev.nicolai.brigadier.dsl.DslCommandBuilder
 
 fun <S, T, V> argument(
     name: String, type: ArgumentType<T>,
-    getter: (CommandContext<S>, String) -> V
+    getter: (CommandContext<S>, String) -> V,
 ) = RequiredArgument(name, type, getter)
 
 fun <S, T> argumentImplied(
     name: String, type: ArgumentType<T>,
-    getter: (CommandContext<S>, String) -> T
+    getter: (CommandContext<S>, String) -> T,
 ) = argument(name, type, getter)
 
 inline fun <S, reified V> impliedGetter(): ((CommandContext<S>, String) -> V) =
     { context, name -> context.getArgument(name, V::class.java) }
 
-fun <S> DslCommandBuilder<S>.boolean(name: String) = argumentImplied<S, Boolean>(name, bool(), ::getBool)
+fun <S> DslCommandBuilder<S>.boolean(name: String) =
+    argumentImplied<S, Boolean>(name, bool(), ::getBool)
 
 fun <S> DslCommandBuilder<S>.integer(name: String, min: Int = Int.MIN_VALUE, max: Int = Int.MAX_VALUE) =
     argumentImplied<S, Int>(name, integer(min, max), ::getInteger)
@@ -61,6 +62,11 @@ fun <S> DslCommandBuilder<S>.float(name: String, min: Float = -Float.MAX_VALUE, 
 fun <S> DslCommandBuilder<S>.double(name: String, min: Double = -Double.MAX_VALUE, max: Double = Double.MAX_VALUE) =
     argumentImplied<S, Double>(name, doubleArg(min, max), ::getDouble)
 
-fun <S> DslCommandBuilder<S>.word(name: String) = argumentImplied<S, String>(name, word(), ::getString)
-fun <S> DslCommandBuilder<S>.string(name: String) = argumentImplied<S, String>(name, string(), ::getString)
-fun <S> DslCommandBuilder<S>.greedyString(name: String) = argumentImplied<S, String>(name, greedyString(), ::getString)
+fun <S> DslCommandBuilder<S>.word(name: String) =
+    argumentImplied<S, String>(name, word(), ::getString)
+
+fun <S> DslCommandBuilder<S>.string(name: String) =
+    argumentImplied<S, String>(name, string(), ::getString)
+
+fun <S> DslCommandBuilder<S>.greedyString(name: String) =
+    argumentImplied<S, String>(name, greedyString(), ::getString)
